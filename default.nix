@@ -15,7 +15,7 @@ stdenv.mkDerivation {
       mkdir -p $out/bin
       cat > $out/bin/nix-serve <<EOF
       #! ${stdenv.shell}
-      PERL5LIB=$PERL5LIB exec ${perlPackages.Starman}/bin/starman $out/libexec/nix-serve/nix-serve.psgi
+      PERL5LIB=$PERL5LIB exec ${perlPackages.Starman}/bin/starman $out/libexec/nix-serve/nix-serve.psgi "\$@"
       EOF
       chmod +x $out/bin/nix-serve
     '';

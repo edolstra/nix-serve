@@ -1,6 +1,9 @@
-use strict;
+use MIME::Base64;
 use Nix::Config;
+use Nix::Manifest;
 use Nix::Store;
+use Nix::Utils;
+use strict;
 
 sub stripPath {
     my ($x) = @_;
@@ -29,6 +32,16 @@ my $app = sub {
         $res .= "References: " . join(" ", map { stripPath($_) } @$refs) . "\n"
             if scalar @$refs > 0;
         $res .= "Deriver: " . stripPath($deriver) . "\n" if defined $deriver;
+        my $secretKeyFile = $ENV{'NIX_SECRET_KEY_FILE'};
+        if (defined $secretKeyFile) {
+            my $s = readFile $secretKeyFile;
+            chomp $s;
+            my ($keyName, $secretKey) = split ":", $s;
+            die "invalid secret key file ‘$secretKeyFile’\n" unless defined $keyName && defined $secretKey;
+            my $fingerprint = fingerprintPath($storePath, $narHash, $refs);
+            my $sig = encode_base64(signString(decode_base64($secretKey), $fingerprint), "");
+            $res .= "Sig: $keyName:$sig\n";
+        }
         return [200, ['Content-Type' => 'text/plain'], [$res]];
     }
 

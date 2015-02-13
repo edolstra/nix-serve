@@ -1,9 +1,11 @@
 with import <nixpkgs> {};
 
-stdenv.mkDerivation {
-  name = "nix-serve-1";
+let nix = nixUnstable; in
 
-  buildInputs = [ perl nix perlPackages.Plack perlPackages.Starman ];
+stdenv.mkDerivation {
+  name = "nix-serve-2";
+
+  buildInputs = [ perl nix perlPackages.Plack perlPackages.Starman perlPackages.DBDSQLite ];
 
   unpackPhase = "true";
 

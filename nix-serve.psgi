@@ -42,7 +42,7 @@ my $app = sub {
             my $sig = encode_base64(signString(decode_base64($secretKey), $fingerprint), "");
             $res .= "Sig: $keyName:$sig\n";
         }
-        return [200, ['Content-Type' => 'text/plain'], [$res]];
+        return [200, ['Content-Type' => 'text/x-nix-narinfo'], [$res]];
     }
 
     elsif ($path =~ "/nar/([0-9a-z]+)\.nar.bz2") {

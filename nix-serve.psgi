@@ -36,7 +36,7 @@ my $app = sub {
         if (defined $secretKeyFile) {
             my $s = readFile $secretKeyFile;
             chomp $s;
-            my ($keyName, $secretKey) = split ":", $s;
+            my ($keyName, $secretKey) = split /:([^:]+)$/, $s;
             die "invalid secret key file ‘$secretKeyFile’\n" unless defined $keyName && defined $secretKey;
             my $fingerprint = fingerprintPath($storePath, $narHash, $narSize, $refs);
             my $sig = encode_base64(signString(decode_base64($secretKey), $fingerprint), "");

@@ -34,13 +34,11 @@ my $app = sub {
         $res .= "Deriver: " . stripPath($deriver) . "\n" if defined $deriver;
         my $secretKeyFile = $ENV{'NIX_SECRET_KEY_FILE'};
         if (defined $secretKeyFile) {
-            my $s = readFile $secretKeyFile;
-            chomp $s;
-            my ($keyName, $secretKey) = split ":", $s;
-            die "invalid secret key file ‘$secretKeyFile’\n" unless defined $keyName && defined $secretKey;
+            my $secretKey = readFile $secretKeyFile;
+            chomp $secretKey;
             my $fingerprint = fingerprintPath($storePath, $narHash, $narSize, $refs);
-            my $sig = encode_base64(signString(decode_base64($secretKey), $fingerprint), "");
-            $res .= "Sig: $keyName:$sig\n";
+            my $sig = signString($secretKey, $fingerprint);
+            $res .= "Sig: $sig\n";
         }
         return [200, ['Content-Type' => 'text/x-nix-narinfo'], [$res]];
     }

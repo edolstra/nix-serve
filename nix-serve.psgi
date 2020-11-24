@@ -48,15 +48,6 @@ my $app = sub {
         return [200, ['Content-Type' => 'text/x-nix-narinfo'], [$res]];
     }
 
-    elsif ($path =~ /^\/nar\/([0-9a-z]+)\.nar\.bz2$/) {
-        my $hashPart = $1;
-        my $storePath = queryPathFromHashPart($hashPart);
-        return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
-        my $fh = new IO::Handle;
-        open $fh, "nix-store --dump '$storePath' | bzip2 --fast |";
-        return [200, ['Content-Type' => 'text/plain'], $fh];
-    }
-
     elsif ($path =~ /^\/nar\/([0-9a-z]+)\.nar$/) {
         my $hashPart = $1;
         my $storePath = queryPathFromHashPart($hashPart);

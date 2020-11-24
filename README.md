@@ -9,11 +9,15 @@ The instructions below assume a flake-enabled version of Nix.
 
 To start `nix-serve`, serving a binary cache on port 5000 of `localhost`:
 
-> # nix run github:edolstra/nix-serve
+```
+# nix run github:edolstra/nix-serve
+```
 
 You can test whether the server works by running
 
-> # nix ping-store --store http://localhost:5000
+```
+# nix ping-store --store http://localhost:5000
+```
 
 You can then pass `--substituters http://localhost:5000/` to Nix to
 use this binary cache as a substituter.
@@ -22,7 +26,9 @@ use this binary cache as a substituter.
 documentation](https://metacpan.org/pod/distribution/Starman/script/starman)
 for additional flags you can pass, e.g.
 
-> # nix run github:edolstra/nix-serve -- --error-log /dev/stderr
+```
+# nix run github:edolstra/nix-serve -- --error-log /dev/stderr
+```
 
 ### Signing
 

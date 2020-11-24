@@ -41,5 +41,10 @@
 
       defaultPackage = forAllSystems (system: self.packages.${system}.nix-serve);
 
+      checks = forAllSystems (system: {
+        build = self.defaultPackage.${system};
+        # FIXME: add a proper test.
+      });
+
     };
 }

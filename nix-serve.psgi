@@ -53,7 +53,7 @@ my $app = sub {
         my $storePath = queryPathFromHashPart($hashPart);
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
         my $fh = new IO::Handle;
-        open $fh, "-|", "nix-store", "--dump", "--", $storePath;
+        open $fh, "-|", "nix", "dump-path", "--", $storePath;
         return [200, ['Content-Type' => 'text/plain'], $fh];
     }
 

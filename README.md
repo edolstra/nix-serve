@@ -27,7 +27,7 @@ documentation](https://metacpan.org/pod/distribution/Starman/script/starman)
 for additional flags you can pass, e.g.
 
 ```
-# nix run github:edolstra/nix-serve -- --error-log /dev/stderr
+# nix run github:edolstra/nix-serve -- --access-log /dev/stderr
 ```
 
 ### Signing

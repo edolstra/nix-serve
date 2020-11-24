@@ -25,7 +25,9 @@
               mkdir -p $out/bin
               cat > $out/bin/nix-serve <<EOF
               #! ${stdenv.shell}
-              PERL5LIB=$PERL5LIB exec ${perlPackages.Starman}/bin/starman $out/libexec/nix-serve/nix-serve.psgi "\$@"
+              PERL5LIB=$PERL5LIB \
+              NIX_REMOTE="\''${NIX_REMOTE:-auto?path-info-cache-size=0}" \
+              exec ${perlPackages.Starman}/bin/starman $out/libexec/nix-serve/nix-serve.psgi "\$@"
               EOF
               chmod +x $out/bin/nix-serve
             '';

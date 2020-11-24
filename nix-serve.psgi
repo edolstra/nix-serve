@@ -42,16 +42,17 @@ my $app = sub {
         } elsif (defined $sigs) {
             $res .= join("\n", map { "Sig: $_" } @$sigs) . "\n";
         }
-        return [200, ['Content-Type' => 'text/x-nix-narinfo'], [$res]];
+        return [200, ['Content-Type' => 'text/x-nix-narinfo', 'Content-Length' => length($res)], [$res]];
     }
 
     elsif ($path =~ /^\/nar\/([0-9a-z]+)\.nar$/) {
         my $hashPart = $1;
         my $storePath = queryPathFromHashPart($hashPart);
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
+        my ($deriver, $narHash, $time, $narSize, $refs) = queryPathInfo($storePath, 1) or die;
         my $fh = new IO::Handle;
         open $fh, "-|", "nix", "dump-path", "--", $storePath;
-        return [200, ['Content-Type' => 'text/plain'], $fh];
+        return [200, ['Content-Type' => 'text/plain', 'Content-Length' => $narSize], $fh];
     }
 
     else {

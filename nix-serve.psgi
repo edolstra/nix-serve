@@ -23,9 +23,12 @@ my $app = sub {
         my $storePath = queryPathFromHashPart($hashPart);
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
         my ($deriver, $narHash, $time, $narSize, $refs, $sigs) = queryPathInfo($storePath, 1) or die;
+        $narHash =~ /^sha256:(.*)/ or die;
+        my $narHash2 = $1;
+        die unless length($narHash2) == 52;
         my $res =
             "StorePath: $storePath\n" .
-            "URL: nar/$hashPart.nar\n" .
+            "URL: nar/$hashPart-$narHash2.nar\n" .
             "Compression: none\n" .
             "NarHash: $narHash\n" .
             "NarSize: $narSize\n";
@@ -45,6 +48,20 @@ my $app = sub {
         return [200, ['Content-Type' => 'text/x-nix-narinfo', 'Content-Length' => length($res)], [$res]];
     }
 
+    elsif ($path =~ /^\/nar\/([0-9a-z]+)-([0-9a-z]+)\.nar$/) {
+        my $hashPart = $1;
+        my $expectedNarHash = $2;
+        my $storePath = queryPathFromHashPart($hashPart);
+        return [410, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
+        my ($deriver, $narHash, $time, $narSize, $refs, $sigs) = queryPathInfo($storePath, 1) or die;
+        return [410, ['Content-Type' => 'text/plain'], ["Incorrect NAR hash. Maybe the path has been recreated.\n"]]
+            unless $narHash eq "sha256:$expectedNarHash";
+        my $fh = new IO::Handle;
+        open $fh, "-|", "nix", "dump-path", "--", $storePath;
+        return [200, ['Content-Type' => 'text/plain'], $fh];
+    }
+
+    # FIXME: remove soon.
     elsif ($path =~ /^\/nar\/([0-9a-z]+)\.nar$/) {
         my $hashPart = $1;
         my $storePath = queryPathFromHashPart($hashPart);

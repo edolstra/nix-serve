@@ -18,6 +18,13 @@ my $app = sub {
         return [200, ['Content-Type' => 'text/plain'], ["StoreDir: $Nix::Config::storeDir\nWantMassQuery: 1\nPriority: 30\n"]];
     }
 
+    elsif ($path =~ /^\/realisations\/(.*)\.doi/) {
+        my $rawDrvOutput = $1;
+        my $rawRealisation = queryRawRealisation($rawDrvOutput);
+        return [404, ['Content-Type' => 'text/plain'], ["No such derivation output.\n"]] unless $rawRealisation;
+        return [200, ['Content-Type' => 'text/plain'], [$rawRealisation]];
+    }
+
     elsif ($path =~ /^\/([0-9a-z]+)\.narinfo$/) {
         my $hashPart = $1;
         my $storePath = queryPathFromHashPart($hashPart);

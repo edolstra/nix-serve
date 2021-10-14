@@ -72,6 +72,13 @@ my $app = sub {
         return [200, ['Content-Type' => 'text/plain', 'Content-Length' => $narSize], $fh];
     }
 
+    elsif ($path =~ /^\/log\/([0-9a-z]+-[0-9a-zA-Z\+\-\.\_\?\=]+)/) {
+        my $storePath = "$Nix::Config::storeDir/$1";
+        my $fh = new IO::Handle;
+        open $fh, "-|", "nix", "log", $storePath;
+        return [200, ['Content-Type' => 'text/plain' ], $fh];
+    }
+
     else {
         return [404, ['Content-Type' => 'text/plain'], ["File not found.\n"]];
     }

@@ -16,7 +16,7 @@ To start `nix-serve`, serving a binary cache on port 5000 of `localhost`:
 You can test whether the server works by running
 
 ```
-# nix ping-store --store http://localhost:5000
+# nix store ping --store http://localhost:5000
 ```
 
 You can then pass `--substituters http://localhost:5000/` to Nix to

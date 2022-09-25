@@ -58,7 +58,7 @@ my $app = sub {
             unless $narHash eq "sha256:$expectedNarHash";
         my $fh = new IO::Handle;
         open $fh, "-|", "nix", "dump-path", "--", $storePath;
-        return [200, ['Content-Type' => 'text/plain'], $fh];
+        return [200, ['Content-Type' => 'text/plain', 'Content-Length' => $narSize], $fh];
     }
 
     # FIXME: remove soon.

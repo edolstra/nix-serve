@@ -22,7 +22,7 @@ You can test whether the server works by running
 You can then pass `--substituters http://localhost:5000/` to Nix to
 use this binary cache as a substituter.
 
-`nix-serve` user the Starman web server. See the [`starman`
+`nix-serve` uses the Starman web server. See the [`starman`
 documentation](https://metacpan.org/pod/distribution/Starman/script/starman)
 for additional flags you can pass, e.g.
 

@@ -43,7 +43,7 @@ my $app = sub {
             my $sig = signString($secretKey, $fingerprint);
             $res .= "Sig: $sig\n";
         } elsif (defined $sigs) {
-            $res .= join("\n", map { "Sig: $_" } @$sigs) . "\n";
+            $res .= join("", map { "Sig: $_\n" } @$sigs);
         }
         return [200, ['Content-Type' => 'text/x-nix-narinfo', 'Content-Length' => length($res)], [$res]];
     }

@@ -1,7 +1,8 @@
 {
-  inputs.nixpkgs.url = "nixpkgs/nixos-20.09";
+  inputs.nixpkgs.follows = "nix/nixpkgs";
+  inputs.nix.url = "github:nixos/nix/ca/queryRealisation-perl";
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nix }:
 
     let
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
@@ -13,7 +14,7 @@
         nix-serve = with final; stdenv.mkDerivation {
           name = "nix-serve-${self.lastModifiedDate}";
 
-          buildInputs = [ perl nix.perl-bindings perlPackages.Plack perlPackages.Starman perlPackages.DBDSQLite ];
+          buildInputs = [ perl nix.defaultPackage.${super.system}.passthru.perl-bindings perlPackages.Plack perlPackages.Starman perlPackages.DBDSQLite ];
 
           unpackPhase = "true";
 

@@ -3,6 +3,7 @@ use Nix::Config;
 use Nix::Manifest;
 use Nix::Store;
 use Nix::Utils;
+use Scalar::Util;
 use strict;
 
 sub stripPath {
@@ -13,9 +14,11 @@ sub stripPath {
 my $app = sub {
     my $env = shift;
     my $path = $env->{PATH_INFO};
+    my $priority = $ENV{"NIX_SERVE_PRIORITY"} || "30";
 
     if ($path eq "/nix-cache-info") {
-        return [200, ['Content-Type' => 'text/plain'], ["StoreDir: $Nix::Config::storeDir\nWantMassQuery: 1\nPriority: 30\n"]];
+        die("NIX_SERVE_PRIORITY must be numeric") unless Scalar::Util::looks_like_number($priority);
+        return [200, ['Content-Type' => 'text/plain'], ["StoreDir: $Nix::Config::storeDir\nWantMassQuery: 1\nPriority: $priority\n"]];
     }
 
     elsif ($path =~ /^\/([0-9a-z]+)\.narinfo$/) {

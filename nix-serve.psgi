@@ -10,6 +10,15 @@ sub stripPath {
     $x =~ s/.*\///; $x
 }
 
+my $secretKey;
+BEGIN {
+	my $secretKeyFile = $ENV{'NIX_SECRET_KEY_FILE'};
+	if (defined $secretKeyFile) {
+		$secretKey = readFile $secretKeyFile;
+		chomp $secretKey;
+	}
+}
+
 my $app = sub {
     my $env = shift;
     my $path = $env->{PATH_INFO};
@@ -35,10 +44,7 @@ my $app = sub {
         $res .= "References: " . join(" ", map { stripPath($_) } @$refs) . "\n"
             if scalar @$refs > 0;
         $res .= "Deriver: " . stripPath($deriver) . "\n" if defined $deriver;
-        my $secretKeyFile = $ENV{'NIX_SECRET_KEY_FILE'};
-        if (defined $secretKeyFile) {
-            my $secretKey = readFile $secretKeyFile;
-            chomp $secretKey;
+        if (defined $secretKey) {
             my $fingerprint = fingerprintPath($storePath, $narHash, $narSize, $refs);
             my $sig = signString($secretKey, $fingerprint);
             $res .= "Sig: $sig\n";

@@ -63,7 +63,7 @@ my $app = sub {
         return [404, ['Content-Type' => 'text/plain'], ["Incorrect NAR hash. Maybe the path has been recreated.\n"]]
             unless $narHash eq "sha256:$expectedNarHash";
         my $fh = new IO::Handle;
-        open $fh, "-|", "nix", "dump-path", "--", $storePath;
+        open $fh, "-|", "nix-store", "--dump", "--", $storePath;
         return [200, ['Content-Type' => 'text/plain', 'Content-Length' => $narSize], $fh];
     }
 
@@ -74,7 +74,7 @@ my $app = sub {
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
         my ($deriver, $narHash, $time, $narSize, $refs) = queryPathInfo($storePath, 1) or die;
         my $fh = new IO::Handle;
-        open $fh, "-|", "nix", "dump-path", "--", $storePath;
+        open $fh, "-|", "nix-store", "--dump", "--", $storePath;
         return [200, ['Content-Type' => 'text/plain', 'Content-Length' => $narSize], $fh];
     }
 

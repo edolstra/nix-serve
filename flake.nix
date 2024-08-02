@@ -5,7 +5,13 @@
 
     let
       forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
-      systems = [ "x86_64-linux" "aarch64-linux" "i686-linux" "x86_64-darwin" ];
+      systems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "i686-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
     in {
 
       overlay = final: prev: {

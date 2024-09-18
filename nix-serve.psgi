@@ -22,6 +22,7 @@ BEGIN {
 my $app = sub {
     my $env = shift;
     my $path = $env->{PATH_INFO};
+    my $store = Nix::Store->new();
 
     if ($path eq "/nix-cache-info") {
         return [200, ['Content-Type' => 'text/plain'], ["StoreDir: $Nix::Config::storeDir\nWantMassQuery: 1\nPriority: 30\n"]];
@@ -29,9 +30,9 @@ my $app = sub {
 
     elsif ($path =~ /^\/([0-9a-z]+)\.narinfo$/) {
         my $hashPart = $1;
-        my $storePath = queryPathFromHashPart($hashPart);
+        my $storePath = $store->queryPathFromHashPart($hashPart);
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
-        my ($deriver, $narHash, $time, $narSize, $refs, $sigs) = queryPathInfo($storePath, 1) or die;
+        my ($deriver, $narHash, $time, $narSize, $refs, $sigs) = $store->queryPathInfo($storePath, 1) or die;
         $narHash =~ /^sha256:(.*)/ or die;
         my $narHash2 = $1;
         die unless length($narHash2) == 52;
@@ -57,9 +58,9 @@ my $app = sub {
     elsif ($path =~ /^\/nar\/([0-9a-z]+)-([0-9a-z]+)\.nar$/) {
         my $hashPart = $1;
         my $expectedNarHash = $2;
-        my $storePath = queryPathFromHashPart($hashPart);
+        my $storePath = $store->queryPathFromHashPart($hashPart);
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
-        my ($deriver, $narHash, $time, $narSize, $refs, $sigs) = queryPathInfo($storePath, 1) or die;
+        my ($deriver, $narHash, $time, $narSize, $refs, $sigs) = $store->queryPathInfo($storePath, 1) or die;
         return [404, ['Content-Type' => 'text/plain'], ["Incorrect NAR hash. Maybe the path has been recreated.\n"]]
             unless $narHash eq "sha256:$expectedNarHash";
         my $fh = new IO::Handle;
@@ -70,9 +71,9 @@ my $app = sub {
     # FIXME: remove soon.
     elsif ($path =~ /^\/nar\/([0-9a-z]+)\.nar$/) {
         my $hashPart = $1;
-        my $storePath = queryPathFromHashPart($hashPart);
+        my $storePath = $store->queryPathFromHashPart($hashPart);
         return [404, ['Content-Type' => 'text/plain'], ["No such path.\n"]] unless $storePath;
-        my ($deriver, $narHash, $time, $narSize, $refs) = queryPathInfo($storePath, 1) or die;
+        my ($deriver, $narHash, $time, $narSize, $refs) = $store->queryPathInfo($storePath, 1) or die;
         my $fh = new IO::Handle;
         open $fh, "-|", "nix", "dump-path", "--", $storePath;
         return [200, ['Content-Type' => 'text/plain', 'Content-Length' => $narSize], $fh];

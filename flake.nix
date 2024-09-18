@@ -11,12 +11,16 @@
       overlay = final: prev: {
         nix-serve = final.pkgs.callPackage ./package.nix {
           inherit self;
+          nix = final.nixVersions.git;
         };
       };
 
-      packages = forAllSystems (system: {
+      packages = forAllSystems (system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
         nix-serve = nixpkgs.legacyPackages.${system}.callPackage ./package.nix {
           inherit self;
+          nix = pkgs.nixVersions.git;
         };
       });
 

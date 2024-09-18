@@ -2,6 +2,8 @@ name: "Test"
 on:
   pull_request:
   push:
+    branches:
+      - main
 jobs:
   tests:
     strategy:
@@ -11,7 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
     - uses: cachix/install-nix-action@V28
     - run: nix flake check

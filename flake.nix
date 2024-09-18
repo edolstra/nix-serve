@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "nixpkgs/nixos-20.09";
+  inputs.nixpkgs.url = "nixpkgs/nixos-24.05";
 
   outputs = { self, nixpkgs }:
 
@@ -13,7 +13,7 @@
         nix-serve = with final; stdenv.mkDerivation {
           name = "nix-serve-${self.lastModifiedDate}";
 
-          buildInputs = [ perl nix.perl-bindings perlPackages.Plack perlPackages.Starman perlPackages.DBDSQLite ];
+          buildInputs = [ perl nixVersions.latest.perl-bindings perlPackages.Plack perlPackages.Starman perlPackages.DBDSQLite ];
 
           unpackPhase = "true";
 

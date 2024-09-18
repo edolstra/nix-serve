@@ -14,4 +14,4 @@ jobs:
       with:
         fetch-depth: 0
     - uses: cachix/install-nix-action@V28
-    - run: nix-build -A checks.$(nix-instantiate --eval -E '(builtins.currentSystem)')
+    - run: nix flake check

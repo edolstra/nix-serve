@@ -1,4 +1,6 @@
 {
+  description = "A utility for sharing a Nix store as a binary cache";
+
   inputs.nixpkgs.url = "nixpkgs/nixos-24.05";
 
   outputs = { self, nixpkgs }:

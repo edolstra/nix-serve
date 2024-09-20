@@ -16,7 +16,7 @@
       ];
     in {
 
-      overlay = final: prev: {
+      overlays.default = final: prev: {
         nix-serve = final.pkgs.callPackage ./package.nix {
           inherit self;
           nix = final.nixVersions.git;
@@ -25,22 +25,21 @@
 
       packages = forAllSystems (system: let
         pkgs = nixpkgs.legacyPackages.${system};
-      in {
+      in rec {
+        default = nix-serve;
         nix-serve = nixpkgs.legacyPackages.${system}.callPackage ./package.nix {
           inherit self;
           nix = pkgs.nixVersions.git;
         };
       });
 
-      defaultPackage = forAllSystems (system: self.packages.${system}.nix-serve);
-
       checks = forAllSystems (system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in {
-        build = self.defaultPackage.${system};
+        build = self.packages.${system}.nix-serve;
       } // nixpkgs.lib.optionalAttrs (pkgs.stdenv.isLinux) {
         nixos-test = pkgs.callPackage ./nixos-test.nix {
-          nix-serve = self.defaultPackage.${system};
+          nix-serve = self.packages.${system}.nix-serve;
         };
       });
     };

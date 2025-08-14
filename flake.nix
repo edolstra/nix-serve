@@ -1,7 +1,7 @@
 {
   description = "A utility for sharing a Nix store as a binary cache";
 
-  inputs.nixpkgs.url = "nixpkgs/nixos-24.05";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
   outputs = { self, nixpkgs }:
 
@@ -19,7 +19,7 @@
       overlays.default = final: prev: {
         nix-serve = final.pkgs.callPackage ./package.nix {
           inherit self;
-          nix = final.nixVersions.git;
+          nixComponents = final.nixVersions.nixComponents_git;
         };
       };
 
@@ -29,7 +29,7 @@
         default = nix-serve;
         nix-serve = nixpkgs.legacyPackages.${system}.callPackage ./package.nix {
           inherit self;
-          nix = pkgs.nixVersions.git;
+          nixComponents = pkgs.nixVersions.nixComponents_git;
         };
       });
 

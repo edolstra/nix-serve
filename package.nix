@@ -2,7 +2,7 @@
   stdenv,
   perl,
   perlPackages,
-  nix,
+  nixComponents,
   self,
 }:
 
@@ -11,7 +11,7 @@ stdenv.mkDerivation {
 
   buildInputs = [
     perl
-    nix.perl-bindings
+    nixComponents.nix-perl-bindings
     perlPackages.Plack
     perlPackages.Starman
     perlPackages.DBDSQLite
